@@ -4,7 +4,6 @@ import android.support.annotation.IntRange;
 
 import com.hzwq.framelibrary.common.util.NumberConvert;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

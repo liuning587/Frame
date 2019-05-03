@@ -2,18 +2,21 @@ package com.hzwq.framelibrary.protocol698;
 
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
-
 import android.util.SparseArray;
+
+import com.hzwq.framelibrary.common.throwable.ParseFrameException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by qinling on 2018/7/6 17:28
  * Description: 698 帧报文 分割以及拼接
  */
-public class Frame698Separator {
+public class Frame698Separator implements Iterable<Frame698> {
+    private static final char FRAME_SEPARATOR = ';';
     private final ArrayList<Frame698> frame698s;
     private final Frame698.Builder frame698Builder;
     private final int upperLimit;
@@ -37,6 +40,24 @@ public class Frame698Separator {
 
     }
 
+    /**
+     * 创建确认帧 作为响应方需要对请求方 提供确认信息.
+     *
+     * @param frame698Str 上一次请求帧(请求方)
+     * @return 确认帧  若是输入的请求帧 不是分帧则返回""
+     */
+    public String confirm(String frame698Str) {
+        Frame698.Parser parser = new Frame698.Parser(frame698Str);
+        if (parser.parseCode!=0) throw new ParseFrameException(parser.getErrorStr());
+        if (!parser.isFrameSeparate()) return "";
+        Frame698 frame698 = parser.reBuild();
+
+        return frame698.newBuilder()
+                .setFrameSeparateStatus(0b10)
+                .setFrameSeparateNumber(parser.getFrameSeparateNumber())
+                .build().toHexString();
+    }
+
 
     public Builder newBuilder() {
         return new Builder(this);
@@ -44,6 +65,11 @@ public class Frame698Separator {
 
     public Builder newBuilder(Frame698.Builder frame698Builder) {
         return new Builder(this, frame698Builder);
+    }
+
+    @Override
+    public Iterator<Frame698> iterator() {
+        return (Iterator<Frame698>) newBuilder().build();
     }
 
     public static final class Builder /*extends Frame698.Builder*/ {
@@ -94,8 +120,9 @@ public class Frame698Separator {
                 int separateStatus = getSeparateStatus(i, apduLinkStrs.size());
                 frame698s.add(createFrame698(i, separateStatus, apduLinkStrs.get(i)));
             }
-            // 确认帧
-            frame698s.add(1, createFrame698(0b00, 0b00, ""));
+            // fixme 确认帧 应该是应答方 生成的，此处应该不需要添加。
+            // 且分帧块号是实时生成的。
+            // frame698s.add(1, createFrame698(0b00, 0b00, ""));
         }
 
 
@@ -143,7 +170,7 @@ public class Frame698Separator {
         /**
          * @param data   总链路数据
          * @param length 每段分帧 数据域字符串长度
-         * @return  ArrayList<String>   链路层数据集合
+         * @return ArrayList<String>   链路层数据集合
          */
         private ArrayList<String> getApduLinkStrs(String data, int length) {
             ArrayList<String> strList = new ArrayList<>();
@@ -166,7 +193,7 @@ public class Frame698Separator {
             StringBuilder stringBuffer = new StringBuilder();
             for (Frame698 frame698 : frame698s) {
                 stringBuffer.append(frame698.toString());
-                stringBuffer.append(" ");
+                stringBuffer.append(FRAME_SEPARATOR);
             }
             return stringBuffer.toString().trim();
         }
@@ -198,7 +225,7 @@ public class Frame698Separator {
          * 设置总链路数据层
          *
          * @param linkDataStr 链路层数据
-         * @return  Builder
+         * @return Builder
          */
         public Builder setLinkDataStr(String linkDataStr) {
             this.linkDataStr = linkDataStr;
@@ -211,6 +238,7 @@ public class Frame698Separator {
     public Parser parse(String... frame698Strs) {
         return new Parser(frame698Strs);
     }
+
 
     public static final class Parser {
         private SparseArray<Frame698.Parser> frame698Parsers;
@@ -235,6 +263,7 @@ public class Frame698Separator {
 
         /**
          * 检查帧地址以及 这些帧是否能够组成一个完整的帧。
+         *
          * @return boolean 是否能组合成完整帧
          */
         private boolean checkFrame698s() {
@@ -258,11 +287,11 @@ public class Frame698Separator {
 
 
         /**
-         *
          * 根据现有的结束帧中 获取到的大小，从0到frameSize-1，若是接收完毕，则不会出现为空的情况
          * 出现null，便是说明，这些帧有所丢失
-         * @param frameSize  报文数量
-         * @return  true 全部的报文都能通过解析
+         *
+         * @param frameSize 报文数量
+         * @return true 全部的报文都能通过解析
          */
         private boolean isParserAllNotNull(int frameSize) {
             for (int i = 0; i < frameSize; i++) {
@@ -273,8 +302,9 @@ public class Frame698Separator {
         }
 
         /**
-         *  根据结束帧 获取帧序号，帧序号表示 帧个数
-         * @return  结束帧报文上 记录的帧序号（其可以表示该组分帧总条数）
+         * 根据结束帧 获取帧序号，帧序号表示 帧个数
+         *
+         * @return 结束帧报文上 记录的帧序号（其可以表示该组分帧总条数）
          */
         private int getFrameSize() {
             int frameSize = 0;
@@ -283,7 +313,7 @@ public class Frame698Separator {
                 Frame698.Parser parser = getParser(key);
                 // 结束帧 的序号
                 if (parser != null && parser.getFrameSeparateStatus() == 0b01) {
-                    frameSize = parser.getFrameSeparateNumber()+1;
+                    frameSize = parser.getFrameSeparateNumber() + 1;
                     break;
                 }
             }
@@ -355,8 +385,9 @@ public class Frame698Separator {
 
         /**
          * 对每个分帧进行解析 并获取其对应的解析码。  0为正常，其他（小于0）均为失败
+         *
          * @param frame698Strs 698报文分帧数组，多条数据
-         * @return  int[] 获取每一个698报文的解析码。全部为0 才算ok
+         * @return int[] 获取每一个698报文的解析码。全部为0 才算ok
          */
         private int[] getParserCodeArr(String[] frame698Strs) {
             int length = frame698Strs.length;

@@ -1,10 +1,9 @@
 package com.hzwq.framelibrary.protocol698.data.datahelpers;
 
-import android.util.TextUtils;
+import android.text.TextUtils;
 
 import com.hzwq.framelibrary.common.IHex;
 import com.hzwq.framelibrary.protocol698.data.DateTimeS;
-import com.hzwq.framelibrary.protocol698.data.IData;
 import com.hzwq.framelibrary.protocol698.data.TI;
 
 

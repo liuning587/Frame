@@ -1,11 +1,10 @@
 package com.hzwq.framelibrary.protocol698;
 
-import android.support.annotation.Nullable;
-
 import com.hzwq.framelibrary.protocol698.apdu.client.ClientAPDU;
 import com.hzwq.framelibrary.protocol698.apdu.client.set.SetRequestNormalList;
 import com.hzwq.framelibrary.protocol698.apdu.link.LinkRequest;
 import com.hzwq.framelibrary.protocol698.apdu.link.LinkResponse;
+import com.hzwq.framelibrary.protocol698.data.Date;
 import com.hzwq.framelibrary.protocol698.data.DateTime;
 import com.hzwq.framelibrary.protocol698.data.DateTimeS;
 import com.hzwq.framelibrary.protocol698.data.MS;
@@ -14,7 +13,6 @@ import com.hzwq.framelibrary.protocol698.data.RSD;
 import com.hzwq.framelibrary.protocol698.data.datahelpers.SetNormal;
 import com.hzwq.framelibrary.protocol698.data.string.OctetString;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 
@@ -45,12 +43,17 @@ public class Test {
                 new SetRequestNormalList.Builder()
                         .setPiid(3)
                         .addNormal(new SetNormal("40010200", new OctetString("000000000001")))
-                        .addNormal(new SetNormal("40000200", new DateTimeS(2016, 1, 20, 16, 27, 11))).build()).toHexString());
+                        .addNormal(new SetNormal("40000200",new DateTimeS(2016, 1, 20, 16, 27, 11))).build()).toHexString());
 
         System.out.println(ClientAPDU.getRequestNxet(9, 1).toHexString());
+       //String []oads =  new Date().split(new Dat11eTimeS(2016,1,0),1,1,0);
+       String []oads =  new Date().split("110001445566778899",1,1,0,-2,-3);
+        for (String oad: oads ) {
+            System.out.println(oad);
+        }
         //   System.out.println((A) new B());
-        // System.out.println(getNum());
-        getNum();
+        // System.out.println();
+    //    getNum();"
     }
 
     private static void getNum() {

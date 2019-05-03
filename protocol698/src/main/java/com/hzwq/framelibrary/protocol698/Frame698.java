@@ -3,12 +3,11 @@ package com.hzwq.framelibrary.protocol698;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
-import com.hzwq.framelibrary.protocol698.apdu.IAPDU;
 import com.hzwq.framelibrary.common.IFrame;
 import com.hzwq.framelibrary.common.util.NumberConvert;
-
-import android.util.TextUtils;
+import com.hzwq.framelibrary.protocol698.apdu.IAPDU;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -639,7 +638,7 @@ public class Frame698 implements Cloneable, IFrame {
          * @param parseCode
          * @return
          */
-        public String getErrorStr(int parseCode) {
+        public String getErrorStr() {
             for (ParseResult error : ParseResult.values()) {
                 if (parseCode == error.getCode()) {
                     return error.getErrMsg();
@@ -1030,7 +1029,7 @@ public class Frame698 implements Cloneable, IFrame {
         public String toFormatString() {
             //String frame698Str = toHexString();
             // Frame698.Parser parser = new Frame698.Parser(frame698Str);
-            if (parseCode != 0) return "解析错误，错误码：" + parseCode + " " + getErrorStr(parseCode);
+            if (parseCode != 0) return "解析错误，错误码：" + parseCode + " " + getErrorStr();
             String lenStr = getLengthStr(frame698Str);
             String[] dir_prmStrs = new String[]{
                     "客户机对服务器上报的响应",
