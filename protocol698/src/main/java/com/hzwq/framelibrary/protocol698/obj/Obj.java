@@ -3,12 +3,9 @@ package com.hzwq.framelibrary.protocol698.obj;
 import android.support.annotation.IntRange;
 
 import com.hzwq.framelibrary.common.util.NumberConvert;
-import com.hzwq.framelibrary.protocol698.data.Array;
 import com.hzwq.framelibrary.protocol698.data.Data;
 import com.hzwq.framelibrary.protocol698.data.OI;
 import com.hzwq.framelibrary.protocol698.data.ScalerUnit;
-import com.hzwq.framelibrary.protocol698.data.number.DoubleLong;
-import com.hzwq.framelibrary.protocol698.data.number.DoubleLongUnsigned;
 
 import java.text.DecimalFormat;
 
@@ -92,14 +89,14 @@ public class Obj {
      */
     public String execute(Data data) {
         String omd = logicName.toHexString() + "0200";//OMD
-        return data.dataTypeStr() + data.toHexString();// 参数Data，
+        return omd + data.dataTypeStr() + data.toHexString();// 参数Data，
     }
+
 
 
     public interface JsonAble {
         String toJson();
     }
-
 
     public static abstract class IC1 extends Obj {
         public Builder build(){

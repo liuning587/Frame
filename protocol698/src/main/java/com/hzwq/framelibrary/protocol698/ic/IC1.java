@@ -4,14 +4,12 @@ package com.hzwq.framelibrary.protocol698.ic;
 import android.support.annotation.IntRange;
 
 import com.hzwq.framelibrary.common.util.NumberConvert;
-import com.hzwq.framelibrary.protocol698.obj.Energy;
-import com.hzwq.framelibrary.protocol698.obj.Obj;
 
 /**
  * Created by qinling on 2019/4/25 10:33
  * Description: 7.3.1　电能量接口类（class_id=1）
  */
-public abstract class IC1 extends Obj {
+public abstract class IC1 {
     public IC1.Builder build() {
         return new IC1.Builder();
     }
