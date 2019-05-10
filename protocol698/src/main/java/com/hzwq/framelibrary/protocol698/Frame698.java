@@ -344,7 +344,7 @@ public class Frame698 implements Cloneable, IFrame {
 
             //判断 链路数据层来源，若是linkDataStr 为空则检查linkData的值，若是二者皆是空，则返回 “”
             linkDataStr = TextUtils.isEmpty(linkDataStr)
-                    ? linkData == null ? "" : linkData.toString()
+                    ? linkData == null ? "" : linkData.toHexString()
                     : linkDataStr;
 
             String linkDataString = linkDataStr;
