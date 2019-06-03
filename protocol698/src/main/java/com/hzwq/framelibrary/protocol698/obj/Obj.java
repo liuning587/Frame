@@ -45,16 +45,21 @@ public class Obj {
      * @param scalerUnit 单位
      * @return
      */
+
     protected String getFormatValueWithUnit(long value, ScalerUnit scalerUnit) {
-        StringBuilder foramt = new StringBuilder("#0.0");
-        for (int i = 1; i < Math.abs(scalerUnit.getPow()); i++) {
-            foramt.append(0);
-        }
-        foramt.append(scalerUnit.getUnitStr());
-        DecimalFormat decimalFormat = new DecimalFormat(foramt.toString());
-        return decimalFormat.format(value);
+        return getFormatValueWithUnit(value, scalerUnit.getUnitStr(), scalerUnit.getPow());
     }
 
+    protected String getFormatValueWithUnit(long value, String unit, int pow) {
+        double num =  (value*(Math.pow(10,pow)));
+        StringBuilder foramt = new StringBuilder("#0.0");
+        for (int i = 1; i < Math.abs(pow); i++) {
+            foramt.append(0);
+        }
+        foramt.append(unit);
+        DecimalFormat decimalFormat = new DecimalFormat(foramt.toString());
+        return decimalFormat.format(num);
+    }
 
     FrameParserException exception = new FrameParserException();
 

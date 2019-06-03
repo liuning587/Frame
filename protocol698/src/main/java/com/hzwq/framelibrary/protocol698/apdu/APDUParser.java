@@ -1,9 +1,5 @@
 package com.hzwq.framelibrary.protocol698.apdu;
 
-import android.support.annotation.NonNull;
-
-import com.hzwq.framelibrary.protocol698.data.PIID;
-
 /**
  * Created by qinling on 2019/4/28 18:13
  * Description:

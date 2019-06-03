@@ -188,17 +188,17 @@ public class ClientAPDU implements ISecurityableAPDU {
         return new ClientAPDU(service);
     }
 
-    public static ClientAPDU getRequestNxet(@IntRange(from = 0, to = LongUnsigned.MAX_VALUE) int lastBlockNum) {
-        return getRequestNxet(0, lastBlockNum);
+    public static ClientAPDU getRequestNext(@IntRange(from = 0, to = LongUnsigned.MAX_VALUE) int lastBlockNum) {
+        return getRequestNext(0, lastBlockNum);
     }
 
-    public static ClientAPDU getRequestNxet(@IntRange(from = 0, to = 255) int piid, @IntRange(from = 0, to = LongUnsigned.MAX_VALUE) int lastBlockNum) {
-        return getRequestNxet(new GetRequestNext().newBuilder()
+    public static ClientAPDU getRequestNext(@IntRange(from = 0, to = 255) int piid, @IntRange(from = 0, to = LongUnsigned.MAX_VALUE) int lastBlockNum) {
+        return getRequestNext(new GetRequestNext().newBuilder()
                 .setPiid(piid)
                 .setSerialNumber(lastBlockNum).build());
     }
 
-    public static ClientAPDU getRequestNxet(GetRequestNext service) {
+    public static ClientAPDU getRequestNext(GetRequestNext service) {
         return new ClientAPDU(service);
     }
 

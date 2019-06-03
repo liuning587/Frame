@@ -1,5 +1,9 @@
 package com.hzwq.framelibrary.protocol698;
 
+import android.text.TextUtils;
+
+import com.hzwq.framelibrary.common.util.NumberConvert;
+import com.hzwq.framelibrary.common.util.RecoverableString;
 import com.hzwq.framelibrary.protocol698.apdu.client.ClientAPDU;
 import com.hzwq.framelibrary.protocol698.apdu.client.set.SetRequestNormalList;
 import com.hzwq.framelibrary.protocol698.apdu.link.LinkRequest;
@@ -10,10 +14,14 @@ import com.hzwq.framelibrary.protocol698.data.DateTimeS;
 import com.hzwq.framelibrary.protocol698.data.MS;
 import com.hzwq.framelibrary.protocol698.data.RCSD;
 import com.hzwq.framelibrary.protocol698.data.RSD;
+import com.hzwq.framelibrary.protocol698.data.ScalerUnit;
 import com.hzwq.framelibrary.protocol698.data.datahelpers.SetNormal;
+import com.hzwq.framelibrary.protocol698.data.manager.OIManager;
 import com.hzwq.framelibrary.protocol698.data.string.OctetString;
 
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+import java.util.BitSet;
 
 
 /**
@@ -21,7 +29,113 @@ import java.lang.reflect.Field;
  * Description:
  */
 public class Test {
+    protected static String getFormatValueWithUnit(long value, String unit, int pow) {
+        double num =  (value*(Math.pow(10,pow)));
+        StringBuilder foramt = new StringBuilder("#0.0");
+        for (int i = 1; i < Math.abs(pow); i++) {
+            foramt.append(0);
+        }
+        foramt.append(unit);
+        DecimalFormat decimalFormat = new DecimalFormat(foramt.toString());
+        return decimalFormat.format(num);
+    }
+
+    public static String getReportStr(String oad,int status) {
+        return "通道： " + oad + "\n" +
+                "上报状态: \n" + getReportStr(status) + "\n";
+    }
+    public static String getReportStr(int status) {
+        String[] reportArr = new String[]{
+                "事件发生上报标识", "事件发生上报确认标识",
+                "事件结束（恢复）上报标识", "事件结束（恢复）上报确认标识"
+        };
+        String binaryStr  = NumberConvert.toBinaryStr(status,4);
+        System.out.println(binaryStr);
+        char[] chars = binaryStr.toCharArray();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < reportArr.length; i++) {
+            String result = reportArr[i].substring(reportArr[i].length()-4,reportArr[i].length()-2);
+            stringBuilder.append(" ").append(i+1).append(".").append(reportArr[i]).append(": ").append(chars[3-i]=='0'?"未":"已").append(result).append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
     public static void main(String[] args) {
+        test3();
+//        System.out.println(getReportStr("12345678",2));
+
+     //   System.out.println( new Frame698.Builder().setLinkDataStr("85030300100200010105060000000006000000000600000000060000000006000000000000").build().toHexString());
+     /*   RecoverableString recoverableString = new RecoverableString("301B0400011200000000");
+        System.out.println(recoverableString.subCurrentSting(0,8));
+        System.out.println(recoverableString.getHistoryString());
+        System.out.println(recoverableString.getCurrentSting());
+        System.out.println(recoverableString.subCurrentSting(0,2));
+        System.out.println(recoverableString.getHistoryString());
+        System.out.println(recoverableString.getCurrentSting());
+        System.out.println(recoverableString.subCurrentSting(0,2));
+        System.out.println(recoverableString.getHistoryString());
+        System.out.println(recoverableString.getCurrentSting());
+        System.out.println(recoverableString.getHistoryStringLength());
+        System.out.println(recoverableString.getOriginalString());*/
+
+       // String oadS = "12345678";
+       // getFormatValueWithUnit(oadS,new String[]{"11111111,22222222,33333333"},3);
+       // System.out.println(oadS);
+
+       // test2();
+        //   System.out.println((A) new B());
+        // System.out.println();
+    //    getNum();"
+    }
+
+    private static void test3() {
+
+     //   System.out.println( new Frame698.Parser("fefefefe68c600e3050100000000000083ae0000900082024485020202401402000101040203110811011101020311081101110102031108110111010203110811011101401602000101080108020311001101110102031106110111020203110d11281103020311111101110402031111110111040203111111011104020311111101110402031111110111040108020311001101110102031106110111020203110d1128110302031111110111040203111111011104020311111101110402031111110111040203ac7816").toFormatString());
+        System.out.println( new Frame698.Builder().setLinkDataStr("85010110100200010103020206000000001c07e3051c0b0f10020206000000001c07e3061c0b0f10020206000000001c07e3071c0b0f100000").build().toHexString());
+        System.out.println( new Frame698.Builder().setLinkDataStr("850101400502000101030906111111111111090522222222220904333333330000").build().toHexString());
+        System.out.println( new Frame698.Builder().setLinkDataStr("850101400502010109061111111111110000").build().toHexString());
+        byte[] bytes =NumberConvert. hexStringToBytes("FE");
+
+        //this.pow = toUnsignedInt(bytes[0]);
+
+
+        System.out.println(bytes[0]+ ":  "+ Integer.toHexString((byte)-2));
+        System.out.println(new ScalerUnit("fe21").getPow());
+        System.out.println(new ScalerUnit("fe21").getUnitStr());
+
+        System.out.println(OIManager.getInstance().getInterfClass("F205"));
+        System.out.println(OIManager.getInstance().getObjName("F205"));
+        // test5();
+    }
+
+    private static void test5() {
+        String bits =  NumberConvert.hexStrToBinaryStr("114F");
+        char[] bitChar = bits.toCharArray();
+        for (int i = 0; i < bitChar.length; i++) {
+            System.out.println(i+":  "+ (bitChar[i]=='1'));
+        }
+        System.out.println(bits.subSequence(9,11).toString());
+
+        String frame = "114F";
+        byte[] bytes = NumberConvert.hexStringToBytes("114F");
+        BitSet bitSet = BitSet.valueOf(bytes);
+        // BitSet bitSet = BitSet.valueOf((byte[])new byte[]{0x04});
+        //BitSet bitSet = new BitSet(1);
+        // bitSet.set(0);
+        for (int i = 0; i < 16; i++) {
+            System.out.println(i+":  "+bitSet.get(i));
+        }
+        System.out.println(NumberConvert.bytesToBinaryString(bitSet.get(9,11).toByteArray()));
+        System.out.println(NumberConvert.bytesToHexString(bitSet.get(9,11).toByteArray()));
+    }
+
+    private static void test2() {
+        String frame = "684200c30501000000000000f495870100 f1000b00 00 01 02 04 09 06 000000000001 09085101000000131f6857086f9bc745999f041357084ef5715de58dd5d2 0000 60f1 16".replaceAll(" ","");
+        System.out.println(new Frame698.Parser(frame).toFormatString());
+        System.out.println(ClientAPDU.getRequestNormal("40180200").toHexString());
+        String client =  "0503035004020002202102001C07E305030000001C07E3050500000000020020210200000020020000";
+        System.out.println(String.format("1000%02x%s0108%s",client.length()/2,client,"11111111"));
+
         //  test();
         System.out.println(ClientAPDU.getRequestNormal("40010200").toHexString());
         System.out.println(ClientAPDU.getRequestNormalList(2, "20000200", "20010200").toHexString());
@@ -35,7 +149,7 @@ public class Test {
                         MS.userAddress("040000000121", "040000000122", "040000000123", "040000000124", "040000000125"))
                 , RCSD.newInstance().addOAD("40010200", "60400200", "60410200", "60420200").addROAD("50040200", "00100200", "00200200")
         ).toHexString());
-        System.out.println(ClientAPDU.getRequestNxet(9, 1).toHexString());
+        //  System.out.println(ClientAPDU.getRequestNxet(9, 1).toHexString());
 
         System.out.println(ClientAPDU.setRequestNormal(2, "40000200", new DateTimeS(2016, 1, 20, 16, 27, 11)).toHexString());
         System.out.println(ClientAPDU.setRequestNormalList(3, new SetNormal("40010200", new OctetString("000000000001"))).toHexString());
@@ -45,15 +159,12 @@ public class Test {
                         .addNormal(new SetNormal("40010200", new OctetString("000000000001")))
                         .addNormal(new SetNormal("40000200",new DateTimeS(2016, 1, 20, 16, 27, 11))).build()).toHexString());
 
-        System.out.println(ClientAPDU.getRequestNxet(9, 1).toHexString());
-       //String []oads =  new Date().split(new Dat11eTimeS(2016,1,0),1,1,0);
-       String []oads =  new Date().split("110001445566778899",1,1,0,-2,-3);
+        // System.out.println(ClientAPDU.getRequestNxet(9, 1).toHexString());
+        //String []oads =  new Date().split(new Dat11eTimeS(2016,1,0),1,1,0);
+        String []oads =  new Date().split("110001445566778899",1,1,0,-2,-3);
         for (String oad: oads ) {
             System.out.println(oad);
         }
-        //   System.out.println((A) new B());
-        // System.out.println();
-    //    getNum();"
     }
 
     private static void getNum() {
@@ -169,10 +280,12 @@ public class Test {
         //  System.out.println((new ClientAPDU((new GetRequestNormal.Builder().setPiid(9).setOad("12345678").build())).setTimeOut(2,TimeUnit.DAY)).toHexString());
         //  System.out.println((new ClientAPDU((new GetRequestMD5().newBuilder().setPiid(9).setOad("12345678").build())).setTimeOut(2, TimeUnit.DAY)).toHexString());
         //  System.out.println((new ClientAPDU((new GetRequestMD5.Builder().setPiid(9).setOad("12345678").build()))).toHexString());
-        System.out.println(new LinkRequest.Builder().build().toHexString());
-        System.out.println(new LinkRequest().newBuilder().build().toHexString());
-        System.out.println(new LinkResponse.Builder().build().toHexString());
-        System.out.println(new LinkResponse().newBuilder().build().toHexString());
+        //System.out.println(new LinkRequest.Builder().build().toHexString());
+        //System.out.println(new LinkRequest().newBuilder().build().toHexString());
+        //System.out.println(new LinkResponse.Builder().build().toHexString());
+        System.out.println(ClientAPDU.getRequestNormal("40180200"));
+      // String client =  "0503035004020002202102001C07E305030000001C07E3050500000000020020210200000020020000";
+      //  System.out.println(String.format("1000%02x%s0108%s",client.length()/2,client,"11111111"));
         // System.out.println((new ClientAPDU((new GetRequestMD5(new ).setPiid(9).setOad("12345678").build()))).toHexString());
         // System.out.println(ClientAPDU.getRequestMD5( new GetRequestMD5().newBuilder().setPiid(9).setOad("12345678").build()).setTimeOut(0, TimeUnit.DAY).toHexString());
         //  System.out.println(ClientAPDU.getRequestNormal( new GetRequestNormal.Builder().setPiid(9).setOad("12345678").build()).setTimeOut(0, TimeUnit.DAY).toHexString());

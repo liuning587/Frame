@@ -5,6 +5,8 @@ import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
+import com.hzwq.framelibrary.common.util.NumberConvert;
+
 
 /**
  * Created by qinling on 2018/5/11 18:22
@@ -43,19 +45,19 @@ public class ScalerUnit extends Data {
     }
 
     public ScalerUnit(String hexStr) {
-        byte[] bytes = hexStringToBytes(hexStr);
-        if (null == bytes || bytes.length < 2) {
+        if (null == hexStr || hexStr.length() < 4) {
             throw new IndexOutOfBoundsException("16进制字符串格式有误");
         }
         this.hexStr = hexStr;
-        this.pow = toUnsignedInt(bytes[0]);
-        this.unit = Unit.newInstance(toUnsignedInt(bytes[1]));
+        this.pow = hexStringToBytes(hexStr.substring(0,2))[0]             ;
+      //  System.out.println(Integer.parseInt(hexStr.substring(2,4),16));
+        this.unit = Unit.newInstance(Integer.parseInt(hexStr.substring(2,4),16)    );
     }
 
     public ScalerUnit(int pow, Unit unit) {
         this.pow = pow;
         this.unit = unit;
-        this.hexStr = Integer.toHexString(pow) + Integer.toHexString(unit.getCode());
+        this.hexStr = NumberConvert.toHexStr(pow,2)+ NumberConvert.toHexStr(unit.getCode(),2);
         System.out.println(hexStr);
     }
 
@@ -162,6 +164,7 @@ public class ScalerUnit extends Data {
         private SparseArray<Unit> unitSparseArray = new SparseArray<>();
 
         public static Unit newInstance(int code) {
+            System.out.println("Unit "+ code);
             return SingleTon.INSTANCE.getUnit(code);
         }
 

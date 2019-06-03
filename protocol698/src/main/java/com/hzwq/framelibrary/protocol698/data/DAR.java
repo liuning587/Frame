@@ -54,6 +54,7 @@ public enum DAR implements IData {
         this.statusStr = statusStr;
     }
 
+    @Override
     public int dataType() {
         return 22;
     }

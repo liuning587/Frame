@@ -44,6 +44,12 @@ public abstract class RSD extends Data {
     public static Selector2 select2(OAD oad, Data start, Data end, Data interval){
         return new Selector2(oad,start,end,interval);
     }
+    public static Selector2 select2(OAD oad, Data start, Data end){
+        return select2(oad,start,end,Data.NULL);
+    }
+    public static Selector2 select2(String oad, Data start, Data end){
+        return new Selector2(new OAD(oad),start,end,Data.NULL);
+    }
     public static RSD select3(Selector2...selector2s){
         return new Selector3(selector2s);
     }
